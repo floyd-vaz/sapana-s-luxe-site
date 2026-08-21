@@ -39,7 +39,7 @@ export function Hero() {
       {/* floating silk ribbon ornament */}
       <motion.div
         aria-hidden
-        className="animate-float pointer-events-none absolute -right-24 top-1/4 hidden h-[26rem] w-[26rem] lg:block"
+        className="animate-float pointer-events-none absolute right-4 top-1/4 hidden h-[24rem] w-[24rem] opacity-80 lg:block"
         style={{
           transform: `translate3d(${tilt.x * 40}px, ${tilt.y * 40}px, 0)`,
         }}
