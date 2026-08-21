@@ -35,6 +35,8 @@ export function Reviews() {
     setI((p) => (p + d + reviews.length) % reviews.length);
   };
 
+  const active = reviews[i]!;
+
   return (
     <section id="reviews" className="relative overflow-hidden px-6 py-28">
       <SectionHeading
@@ -60,12 +62,12 @@ export function Reviews() {
                 ))}
               </div>
               <p className="mt-6 font-display text-xl leading-relaxed sm:text-2xl">
-                “{reviews[i].text}”
+                “{active.text}”
               </p>
               <footer className="mt-6 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                <span className="text-foreground">{reviews[i].name}</span>
+                <span className="text-foreground">{active.name}</span>
                 <span className="glass-soft rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-gold">
-                  {reviews[i].tag}
+                  {active.tag}
                 </span>
               </footer>
             </motion.blockquote>
