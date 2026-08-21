@@ -33,10 +33,8 @@ export function Hero() {
         className="absolute inset-0 h-[118%] w-full object-cover"
       />
       <div className="absolute inset-0 bg-background/45 backdrop-blur-[2px]" />
-      <div
-        className="absolute inset-0 opacity-90"
-        style={{ background: "var(--gradient-velvet)" }}
-      />
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-background/70" />
+      <div className="absolute inset-0 bg-[radial-gradient(70%_60%_at_80%_20%,var(--rose),transparent_70%)] opacity-15" />
 
       {/* floating silk ribbon ornament */}
       <motion.div
