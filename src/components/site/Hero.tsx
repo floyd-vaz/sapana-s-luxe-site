@@ -32,7 +32,7 @@ export function Hero() {
         style={{ y }}
         className="absolute inset-0 h-[118%] w-full object-cover"
       />
-      <div className="absolute inset-0 bg-background/55 backdrop-blur-[2px]" />
+      <div className="absolute inset-0 bg-background/45 backdrop-blur-[2px]" />
       <div
         className="absolute inset-0 opacity-90"
         style={{ background: "var(--gradient-velvet)" }}
