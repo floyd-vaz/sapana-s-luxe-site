@@ -14,16 +14,268 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      appointments: {
+        Row: {
+          created_at: string
+          customer_name: string
+          customer_phone: string
+          date: string
+          id: string
+          notes: string | null
+          payment_status: Database["public"]["Enums"]["payment_status"]
+          service_ids: string[]
+          staff_id: string | null
+          status: Database["public"]["Enums"]["appointment_status"]
+          time_slot: string
+          total_price: number
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          customer_name: string
+          customer_phone: string
+          date: string
+          id?: string
+          notes?: string | null
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          service_ids?: string[]
+          staff_id?: string | null
+          status?: Database["public"]["Enums"]["appointment_status"]
+          time_slot: string
+          total_price?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          customer_name?: string
+          customer_phone?: string
+          date?: string
+          id?: string
+          notes?: string | null
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          service_ids?: string[]
+          staff_id?: string | null
+          status?: Database["public"]["Enums"]["appointment_status"]
+          time_slot?: string
+          total_price?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      availability_exceptions: {
+        Row: {
+          blocked_slots: string[]
+          created_at: string
+          date: string
+          id: string
+          is_full_day_block: boolean
+          reason: string
+        }
+        Insert: {
+          blocked_slots?: string[]
+          created_at?: string
+          date: string
+          id?: string
+          is_full_day_block?: boolean
+          reason?: string
+        }
+        Update: {
+          blocked_slots?: string[]
+          created_at?: string
+          date?: string
+          id?: string
+          is_full_day_block?: boolean
+          reason?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id: string
+          name?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      rate_limits: {
+        Row: {
+          bucket: string
+          created_at: string
+          id: string
+          identifier: string
+        }
+        Insert: {
+          bucket: string
+          created_at?: string
+          id?: string
+          identifier: string
+        }
+        Update: {
+          bucket?: string
+          created_at?: string
+          id?: string
+          identifier?: string
+        }
+        Relationships: []
+      }
+      reviews: {
+        Row: {
+          approved_status: boolean
+          comment: string | null
+          created_at: string
+          customer_name: string
+          id: string
+          rating: number
+          user_id: string | null
+        }
+        Insert: {
+          approved_status?: boolean
+          comment?: string | null
+          created_at?: string
+          customer_name: string
+          id?: string
+          rating: number
+          user_id?: string | null
+        }
+        Update: {
+          approved_status?: boolean
+          comment?: string | null
+          created_at?: string
+          customer_name?: string
+          id?: string
+          rating?: number
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          active_status: boolean
+          category: string
+          created_at: string
+          description: string | null
+          duration_min: number
+          id: string
+          name: string
+          price: number
+          updated_at: string
+        }
+        Insert: {
+          active_status?: boolean
+          category: string
+          created_at?: string
+          description?: string | null
+          duration_min?: number
+          id?: string
+          name: string
+          price?: number
+          updated_at?: string
+        }
+        Update: {
+          active_status?: boolean
+          category?: string
+          created_at?: string
+          description?: string | null
+          duration_min?: number
+          id?: string
+          name?: string
+          price?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      staff: {
+        Row: {
+          active_status: boolean
+          created_at: string
+          id: string
+          name: string
+          specialty: string | null
+        }
+        Insert: {
+          active_status?: boolean
+          created_at?: string
+          id?: string
+          name: string
+          specialty?: string | null
+        }
+        Update: {
+          active_status?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+          specialty?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "customer"
+      appointment_status: "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED"
+      payment_status: "UNPAID" | "DEPOSIT_PAID" | "PAID" | "REFUNDED"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +402,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "customer"],
+      appointment_status: ["PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"],
+      payment_status: ["UNPAID", "DEPOSIT_PAID", "PAID", "REFUNDED"],
+    },
   },
 } as const
