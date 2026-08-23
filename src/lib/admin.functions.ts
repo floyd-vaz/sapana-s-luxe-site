@@ -56,9 +56,10 @@ export const adminUpdateAppointment = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => adminUpdateAppointmentSchema.parse(data))
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
-    const patch: Record<string, unknown> = {};
-    if (data.status) patch["status"] = data.status;
-    if (data.paymentStatus) patch["payment_status"] = data.paymentStatus;
+    const patch = {
+      ...(data.status ? { status: data.status } : {}),
+      ...(data.paymentStatus ? { payment_status: data.paymentStatus } : {}),
+    };
 
     const { data: updated, error } = await context.supabase
       .from("appointments")
