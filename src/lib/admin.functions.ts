@@ -56,7 +56,10 @@ export const adminUpdateAppointment = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => adminUpdateAppointmentSchema.parse(data))
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
-    const patch: Record<string, unknown> = {};
+    const patch: {
+      status?: (typeof data)["status"];
+      payment_status?: (typeof data)["paymentStatus"];
+    } = {};
     if (data.status) patch["status"] = data.status;
     if (data.paymentStatus) patch["payment_status"] = data.paymentStatus;
 
