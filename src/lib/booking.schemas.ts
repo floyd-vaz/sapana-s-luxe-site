@@ -50,6 +50,11 @@ export const adminUpdateAppointmentSchema = z.object({
   id: z.string().uuid(),
   status: z.enum(appointmentStatuses).optional(),
   paymentStatus: z.enum(paymentStatuses).optional(),
+  date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
+  timeSlot: z.enum(TIME_SLOTS).optional(),
 });
 
 export const adminServiceSchema = z.object({
