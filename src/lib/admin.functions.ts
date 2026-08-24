@@ -195,3 +195,82 @@ export const adminDeleteException = createServerFn({ method: "POST" })
     if (error) throw new Error("Could not remove the blocked date");
     return { ok: true };
   });
+
+export const adminOverview = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const today = new Date();
+    const iso = (d: Date) => d.toISOString().slice(0, 10);
+    const weekAgo = new Date(today.getTime() - 6 * 86_400_000);
+
+    const [{ data: appointments }, { data: services }, { count: clientCount }] = await Promise.all([
+      context.supabase
+        .from("appointments")
+        .select("id, date, status, payment_status, total_price, service_ids")
+        .gte("date", iso(weekAgo)),
+      context.supabase.from("services").select("id, name, price, active_status"),
+      context.supabase.from("profiles").select("id", { count: "exact", head: true }),
+    ]);
+
+    const rows = appointments ?? [];
+    const live = rows.filter((a) => a.status !== "CANCELLED");
+    const todayRows = live.filter((a) => a.date === iso(today));
+    const serviceName = new Map((services ?? []).map((s) => [s.id, s.name]));
+
+    const tally = new Map<string, { name: string; count: number; revenue: number }>();
+    for (const a of live) {
+      for (const id of a.service_ids ?? []) {
+        const key = serviceName.get(id) ?? "Service";
+        const entry = tally.get(key) ?? { name: key, count: 0, revenue: 0 };
+        entry.count += 1;
+        entry.revenue += Number(a.total_price) / Math.max((a.service_ids ?? []).length, 1);
+        tally.set(key, entry);
+      }
+    }
+
+    return {
+      todayBookings: todayRows.length,
+      weekBookings: live.length,
+      pending: live.filter((a) => a.status === "PENDING").length,
+      weekRevenue: live.reduce((sum, a) => sum + Number(a.total_price), 0),
+      todayRevenue: todayRows.reduce((sum, a) => sum + Number(a.total_price), 0),
+      collected: live
+        .filter((a) => a.payment_status === "PAID")
+        .reduce((sum, a) => sum + Number(a.total_price), 0),
+      activeServices: (services ?? []).filter((s) => s.active_status).length,
+      clients: clientCount ?? 0,
+      topServices: [...tally.values()].sort((a, b) => b.count - a.count).slice(0, 5),
+    };
+  });
+
+export const adminListClients = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const [{ data: profiles }, { data: appointments }] = await Promise.all([
+      context.supabase
+        .from("profiles")
+        .select("id, name, email, phone, created_at")
+        .order("created_at", { ascending: false })
+        .limit(500),
+      context.supabase.from("appointments").select("user_id, date, total_price, status"),
+    ]);
+
+    const byUser = new Map<string, { visits: number; spend: number; last: string | null }>();
+    for (const a of appointments ?? []) {
+      if (!a.user_id || a.status === "CANCELLED") continue;
+      const entry = byUser.get(a.user_id) ?? { visits: 0, spend: 0, last: null };
+      entry.visits += 1;
+      entry.spend += Number(a.total_price);
+      if (!entry.last || a.date > entry.last) entry.last = a.date;
+      byUser.set(a.user_id, entry);
+    }
+
+    return (profiles ?? []).map((p) => ({
+      ...p,
+      visits: byUser.get(p.id)?.visits ?? 0,
+      spend: byUser.get(p.id)?.spend ?? 0,
+      lastVisit: byUser.get(p.id)?.last ?? null,
+    }));
+  });
