@@ -2,7 +2,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { SALON } from "@/lib/salon";
 
 const title = "Client Sign In | Sapana's Touch of Class, Fatorda";
@@ -72,7 +71,11 @@ function AuthPage() {
 
   async function onGoogle() {
     try {
-      await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: `${window.location.origin}/bookings` },
+      });
+      if (error) throw error;
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Google sign-in failed");
     }
