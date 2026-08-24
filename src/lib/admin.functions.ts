@@ -59,6 +59,8 @@ export const adminUpdateAppointment = createServerFn({ method: "POST" })
     const patch = {
       ...(data.status ? { status: data.status } : {}),
       ...(data.paymentStatus ? { payment_status: data.paymentStatus } : {}),
+      ...(data.date ? { date: data.date } : {}),
+      ...(data.timeSlot ? { time_slot: data.timeSlot } : {}),
     };
 
     const { data: updated, error } = await context.supabase
