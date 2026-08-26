@@ -1,6 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { BookingsPanel } from "@/components/admin/BookingsPanel";
+import { OverviewPanel } from "@/components/admin/OverviewPanel";
+import { ClientsPanel } from "@/components/admin/ClientsPanel";
+import { ServicesPanel } from "@/components/admin/ServicesPanel";
+import { SchedulePanel } from "@/components/admin/SchedulePanel";
+import { ReviewsPanel } from "@/components/admin/ReviewsPanel";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -17,10 +23,42 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
 });
 
+const TABS = [
+  { id: "overview", label: "Overview" },
+  { id: "bookings", label: "Bookings" },
+  { id: "schedule", label: "Schedule" },
+  { id: "services", label: "Services" },
+  { id: "clients", label: "Clients" },
+  { id: "reviews", label: "Reviews" },
+] as const;
+
+type TabId = (typeof TABS)[number]["id"];
+
 function AdminPage() {
+  const [tab, setTab] = useState<TabId>("overview");
+
   return (
-    <AdminShell eyebrow="Management portal" title="Bookings dashboard">
-      <BookingsPanel />
+    <AdminShell eyebrow="Management portal" title="Salon control centre">
+      <div className="glass-soft mb-8 flex flex-wrap gap-1 rounded-full p-1">
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            onClick={() => setTab(t.id)}
+            className={`rounded-full px-4 py-2 text-[11px] uppercase tracking-[0.18em] transition-colors ${
+              tab === t.id ? "bg-gold/15 text-gold" : "text-muted-foreground hover:text-gold"
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {tab === "overview" && <OverviewPanel />}
+      {tab === "bookings" && <BookingsPanel />}
+      {tab === "schedule" && <SchedulePanel />}
+      {tab === "services" && <ServicesPanel />}
+      {tab === "clients" && <ClientsPanel />}
+      {tab === "reviews" && <ReviewsPanel />}
     </AdminShell>
   );
 }
