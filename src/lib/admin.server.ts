@@ -1,10 +1,8 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
+
 type AdminContext = {
-  supabase: {
-    rpc: (
-      functionName: "has_role",
-      args: { _user_id: string; _role: "admin" },
-    ) => PromiseLike<{ data: boolean | null; error: unknown }>;
-  };
+  supabase: SupabaseClient<Database>;
   userId: string;
 };
 
