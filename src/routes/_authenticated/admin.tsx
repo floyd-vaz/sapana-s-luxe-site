@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { BookingsPanel } from "@/components/admin/BookingsPanel";
@@ -7,8 +7,13 @@ import { ClientsPanel } from "@/components/admin/ClientsPanel";
 import { ServicesPanel } from "@/components/admin/ServicesPanel";
 import { SchedulePanel } from "@/components/admin/SchedulePanel";
 import { ReviewsPanel } from "@/components/admin/ReviewsPanel";
+import { getMyRole } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/_authenticated/admin")({
+  beforeLoad: async () => {
+    const { isAdmin } = await getMyRole();
+    if (!isAdmin) throw redirect({ to: "/bookings", replace: true });
+  },
   head: () => ({
     meta: [
       { title: "Admin Portal | Sapana's Touch of Class" },
