@@ -69,13 +69,30 @@ export function Nav() {
             </a>
           ))}
         </div>
-        <a
-          href={SALON.phoneHref}
-          className="glass-soft inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs uppercase tracking-[0.18em] transition-colors hover:text-gold"
-        >
-          <Phone className="h-3.5 w-3.5 text-gold" />
-          <span className="hidden sm:inline">Call Now</span>
-        </a>
+        <div className="flex items-center gap-2 sm:gap-3">
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className="hidden rounded-full px-2 text-xs uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-gold sm:inline"
+            >
+              Admin
+            </Link>
+          )}
+          <Link
+            to={signedIn ? "/bookings" : "/auth"}
+            className="rounded-full px-2 text-xs uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-gold"
+          >
+            {signedIn ? "My bookings" : "Sign in"}
+          </Link>
+          <a
+            href={SALON.phoneHref}
+            className="glass-soft inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs uppercase tracking-[0.18em] transition-colors hover:text-gold"
+          >
+            <Phone className="h-3.5 w-3.5 text-gold" />
+            <span className="hidden sm:inline">Call Now</span>
+          </a>
+        </div>
+
       </nav>
     </header>
   );
