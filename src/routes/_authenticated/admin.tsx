@@ -43,7 +43,7 @@ function AdminPage() {
   const [tab, setTab] = useState<TabId>("overview");
 
   return (
-    <AdminShell eyebrow="Management portal" title="Salon control centre">
+    <AdminShell eyebrow="Management portal" title="Salon control centre" showAdmin>
       <div className="glass-soft mb-8 flex flex-wrap gap-1 rounded-full p-1">
         {TABS.map((t) => (
           <button

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Check, ArrowRight, ArrowLeft, MessageCircle } from "lucide-react";
 import { SectionHeading } from "./SectionHeading";
 import { SALON, TIME_SLOTS } from "@/lib/salon";
+import { useBookingAccess } from "@/hooks/use-booking-access";
 
 const categories = [
   { key: "Hair Care & Styling", desc: "Rebonding, colour, spa, cuts" },
@@ -14,6 +15,7 @@ const categories = [
 const steps = ["Service", "Date & Time", "Your Details", "Confirm"];
 
 export function Booking() {
+  const withBookingAccess = useBookingAccess();
   const [step, setStep] = useState(0);
   const [service, setService] = useState("");
   const [date, setDate] = useState("");
@@ -77,7 +79,7 @@ export function Booking() {
                   {categories.map((c) => (
                     <button
                       key={c.key}
-                      onClick={() => setService(c.key)}
+                      onClick={() => void withBookingAccess(() => setService(c.key))}
                       className={`rounded-2xl border p-5 text-left transition-all hover:-translate-y-1 ${
                         service === c.key
                           ? "border-gold bg-obsidian-soft/70 shadow-[var(--shadow-glow)]"
