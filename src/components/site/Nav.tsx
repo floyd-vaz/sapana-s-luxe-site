@@ -15,6 +15,7 @@ export function Nav() {
   const [solid, setSolid] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [displayName, setDisplayName] = useState("");
 
   useEffect(() => {
     const onScroll = () => setSolid(window.scrollY > 40);
@@ -24,24 +25,31 @@ export function Nav() {
 
   useEffect(() => {
     let active = true;
-    async function load(userId: string | null) {
+    async function load(user: { id: string; email?: string; user_metadata?: Record<string, unknown> } | null) {
       if (!active) return;
-      setSignedIn(Boolean(userId));
-      if (!userId) {
+      setSignedIn(Boolean(user));
+      if (!user) {
         setIsAdmin(false);
+        setDisplayName("");
         return;
       }
+      const metadataName = user.user_metadata?.name ?? user.user_metadata?.full_name;
+      setDisplayName(
+        typeof metadataName === "string" && metadataName.trim()
+          ? metadataName.trim().split(" ")[0]
+          : (user.email?.split("@")[0] ?? "My account"),
+      );
       const { data } = await supabase
         .from("user_roles")
         .select("role")
-        .eq("user_id", userId)
+        .eq("user_id", user.id)
         .eq("role", "admin")
         .maybeSingle();
       if (active) setIsAdmin(Boolean(data));
     }
-    supabase.auth.getSession().then(({ data }) => load(data.session?.user.id ?? null));
+    supabase.auth.getUser().then(({ data }) => load(data.user));
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) =>
-      load(session?.user.id ?? null),
+      load(session?.user ?? null),
     );
     return () => {
       active = false;
@@ -82,7 +90,7 @@ export function Nav() {
             to={signedIn ? "/bookings" : "/auth"}
             className="rounded-full px-2 text-xs uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-gold"
           >
-            {signedIn ? "My bookings" : "Sign in"}
+            {signedIn ? `${displayName} · Bookings` : "Sign in"}
           </Link>
           <a
             href={SALON.phoneHref}

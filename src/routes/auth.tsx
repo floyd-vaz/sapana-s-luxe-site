@@ -1,14 +1,20 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SALON } from "@/lib/salon";
+import { getMyRole } from "@/lib/admin.functions";
 
 const title = "Client Sign In | Sapana's Touch of Class, Fatorda";
 const description =
   "Sign in to manage your appointments at Sapana's Touch of Class, Fatorda Goa — view bookings, reschedule and leave a review.";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    redirect:
+      search.redirect === "book" || search.redirect === "bookings" ? search.redirect : undefined,
+  }),
   head: () => ({
     meta: [
       { title },
@@ -25,6 +31,8 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const search = Route.useSearch();
+  const fetchRole = useServerFn(getMyRole);
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,11 +40,28 @@ function AuthPage() {
   const [phone, setPhone] = useState("");
   const [busy, setBusy] = useState(false);
 
+  async function routeSignedInUser() {
+    const { isAdmin } = await fetchRole();
+    if (isAdmin) {
+      await navigate({ to: "/admin", replace: true });
+      return;
+    }
+    if (search.redirect === "bookings") {
+      await navigate({ to: "/bookings", replace: true });
+      return;
+    }
+    await navigate({ to: "/", hash: search.redirect === "book" ? "book" : undefined, replace: true });
+  }
+
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/bookings", replace: true });
+    let active = true;
+    supabase.auth.getUser().then(({ data }) => {
+      if (active && data.user) void routeSignedInUser();
     });
-  }, [navigate]);
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const field =
     "w-full rounded-xl border border-input bg-obsidian-soft/50 px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-gold";
@@ -46,22 +71,24 @@ function AuthPage() {
     setBusy(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             data: { name, phone },
-            emailRedirectTo: `${window.location.origin}/bookings`,
+            emailRedirectTo: `${window.location.origin}/auth${search.redirect ? `?redirect=${search.redirect}` : ""}`,
           },
         });
         if (error) throw error;
-        toast.success("Account created. Check your email if confirmation is required.");
+        if (!data.session) {
+          toast.success("Account created. Check your email to confirm your account.");
+          return;
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
-      const { data } = await supabase.auth.getSession();
-      if (data.session) navigate({ to: "/bookings", replace: true });
+      await routeSignedInUser();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Something went wrong");
     } finally {
@@ -73,7 +100,9 @@ function AuthPage() {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: `${window.location.origin}/bookings` },
+        options: {
+          redirectTo: `${window.location.origin}/auth${search.redirect ? `?redirect=${search.redirect}` : ""}`,
+        },
       });
       if (error) throw error;
     } catch (error) {

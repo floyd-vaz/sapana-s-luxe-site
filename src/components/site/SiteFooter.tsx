@@ -1,5 +1,6 @@
 import { MapPin, Phone, Clock, Navigation, CreditCard } from "lucide-react";
 import { SALON } from "@/lib/salon";
+import { BookAppointmentLink } from "./BookAppointmentLink";
 
 export function SiteFooter() {
   return (
@@ -44,12 +45,11 @@ export function SiteFooter() {
             >
               <Navigation className="h-4 w-4" /> Get Directions
             </a>
-            <a
-              href="#book"
+            <BookAppointmentLink
               className="glass rounded-full px-7 py-3 text-xs font-medium uppercase tracking-[0.2em] transition-colors hover:text-gold"
             >
               Book Appointment
-            </a>
+            </BookAppointmentLink>
           </div>
         </div>
 

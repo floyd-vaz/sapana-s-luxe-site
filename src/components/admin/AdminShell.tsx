@@ -7,10 +7,12 @@ export function AdminShell({
   eyebrow,
   title,
   children,
+  showAdmin = false,
 }: {
   eyebrow: string;
   title: string;
   children: React.ReactNode;
+  showAdmin?: boolean;
 }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -19,7 +21,7 @@ export function AdminShell({
     await queryClient.cancelQueries();
     queryClient.clear();
     await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
+    navigate({ to: "/", replace: true });
   }
 
   return (
@@ -30,9 +32,11 @@ export function AdminShell({
             {SALON.name}
           </Link>
           <nav className="flex items-center gap-4 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-            <Link to="/admin" className="transition-colors hover:text-gold">
-              Admin
-            </Link>
+            {showAdmin && (
+              <Link to="/admin" className="transition-colors hover:text-gold">
+                Admin
+              </Link>
+            )}
             <Link to="/bookings" className="transition-colors hover:text-gold">
               My bookings
             </Link>

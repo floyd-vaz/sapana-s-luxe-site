@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { Star, Phone } from "lucide-react";
 import heroImg from "@/assets/hero-salon.jpg";
 import { SALON } from "@/lib/salon";
+import { BookAppointmentLink } from "./BookAppointmentLink";
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
@@ -110,12 +111,11 @@ export function Hero() {
           transition={{ duration: 0.7, delay: 0.95 }}
           className="mt-10 flex flex-wrap items-center gap-4"
         >
-          <a
-            href="#book"
+          <BookAppointmentLink
             className="glow-cta rounded-full px-8 py-4 text-sm font-medium uppercase tracking-[0.18em]"
           >
             Book Appointment
-          </a>
+          </BookAppointmentLink>
           <a
             href="#services"
             className="glass rounded-full px-8 py-4 text-sm font-medium uppercase tracking-[0.18em] text-foreground transition-colors hover:text-gold"
