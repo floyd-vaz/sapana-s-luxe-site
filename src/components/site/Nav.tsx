@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Phone } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { SALON } from "@/lib/salon";
+import { supabase } from "@/integrations/supabase/client";
 
 const links = [
   { href: "#services", label: "Services" },
@@ -11,11 +13,42 @@ const links = [
 
 export function Nav() {
   const [solid, setSolid] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
   useEffect(() => {
     const onScroll = () => setSolid(window.scrollY > 40);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    let active = true;
+    async function load(userId: string | null) {
+      if (!active) return;
+      setSignedIn(Boolean(userId));
+      if (!userId) {
+        setIsAdmin(false);
+        return;
+      }
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .eq("role", "admin")
+        .maybeSingle();
+      if (active) setIsAdmin(Boolean(data));
+    }
+    supabase.auth.getSession().then(({ data }) => load(data.session?.user.id ?? null));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) =>
+      load(session?.user.id ?? null),
+    );
+    return () => {
+      active = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
 
   return (
     <header
