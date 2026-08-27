@@ -1,6 +1,6 @@
 # Goa Salon Glow
 
-Act as a Senior UI/UX Designer and Web Developer. Build a high-converting, modern, premium responsive website for "Sapana's Touch of Class" beauty salon in Fatorda, Goa. 
+A high-converting, modern, premium responsive website for "Sapana's Touch of Class" beauty salon in Fatorda, Goa. 
 
 ### 1. BRAND & BUSINESS DETAILS
 
@@ -8,7 +8,7 @@ Act as a Senior UI/UX Designer and Web Developer. Build a high-converting, moder
 
 * Rating & Proof: 4.8★ Rating (150+ Google Reviews)
 
-* Contact Number: +91 070285 77275
+* Contact Number: +91 XXX-XXX-XXX
 
 * Address: Building No 1, Albanita Enclave, Shop No 2 & 3, Fatorda, Madgaon, Goa 403601 (Plus Code: 7XR5+CG)
 
@@ -99,16 +99,6 @@ Act as a Senior UI/UX Designer and Web Developer. Build a high-converting, moder
 * Mobile-first, fast-loading, highly responsive layout.
 
 * SEO Optimized for keywords: "Best salon in Fatorda", "Beauty parlour Madgaon Goa", "Hair salon near Albanita Enclave".
-
-This project was built with [Lovable](https://lovable.dev).
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/8b099671-e07b-4ea2-8672-7e3e692f1072).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
 ## Development
 
