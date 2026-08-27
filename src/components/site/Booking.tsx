@@ -264,7 +264,7 @@ export function Booking() {
                       <p className="text-xs text-muted-foreground">Checking availability…</p>
                     )}
                     {availability.data?.closed && (
-                      <p className="text-xs text-rose-velvet">
+                      <p className="text-xs text-destructive">
                         Closed on this date{availability.data.reason ? ` — ${availability.data.reason}` : ""}.
                         Please pick another day.
                       </p>
