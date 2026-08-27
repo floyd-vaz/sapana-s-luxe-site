@@ -33,10 +33,10 @@ export function Nav() {
         setDisplayName("");
         return;
       }
-      const metadataName = user.user_metadata?.name ?? user.user_metadata?.full_name;
+      const metadataName = user.user_metadata?.["name"] ?? user.user_metadata?.["full_name"];
       setDisplayName(
         typeof metadataName === "string" && metadataName.trim()
-          ? metadataName.trim().split(" ")[0]
+          ? (metadataName.trim().split(" ")[0] ?? "My account")
           : (user.email?.split("@")[0] ?? "My account"),
       );
       const { data } = await supabase
