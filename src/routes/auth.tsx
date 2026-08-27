@@ -11,10 +11,12 @@ const description =
   "Sign in to manage your appointments at Sapana's Touch of Class, Fatorda Goa — view bookings, reschedule and leave a review.";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    redirect:
-      search.redirect === "book" || search.redirect === "bookings" ? search.redirect : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>) => {
+    const value = search["redirect"];
+    return value === "book" || value === "bookings"
+      ? { redirect: value as "book" | "bookings" }
+      : {};
+  },
   head: () => ({
     meta: [
       { title },
@@ -50,7 +52,11 @@ function AuthPage() {
       await navigate({ to: "/bookings", replace: true });
       return;
     }
-    await navigate({ to: "/", hash: search.redirect === "book" ? "book" : undefined, replace: true });
+    if (search.redirect === "book") {
+      await navigate({ to: "/", hash: "book", replace: true });
+      return;
+    }
+    await navigate({ to: "/", replace: true });
   }
 
   useEffect(() => {
